@@ -12,7 +12,7 @@ UserApi objApi= new UserApi();
 
 @Given("user sets the baseurl and endpoint for get {string}")
 public void user_sets_the_baseurl_and_endpoint_for_get(String string) throws IOException {
-	objApi.setUserGetEndpoint(string);
+	objApi.setUserGetEndpoint("GET");
 }
 
 @When("user send http get request")

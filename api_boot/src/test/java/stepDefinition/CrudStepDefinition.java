@@ -17,17 +17,19 @@ public void create_a_user_with_valid_all_endpoint() throws IOException {
 
 @When("user send http request")
 public void user_send_http_request() throws InvalidFormatException, IOException {
-	objApi.postRequest();
+	objApi.postRequest("CRUD");
 	objApi.setUserGetEndpoint("PUT");
 	objApi.putRequest("CRUD");
+	objApi.setUserGetEndpoint("GET");
+	objApi.sendGetAllUser("CRUD");
 	objApi.setUserGetEndpoint("DELETE");
 	objApi.deleteRequest("CRUD");
 }
 
 @Then("user gets valid response body for all")
 public void user_gets_valid_response_body_for_all() {
-	int rs =200;
-	objApi.verifyStatusCode(rs);
+	//int rs =200;
+	objApi.verifyStatusCode(200);
 }
 
 }

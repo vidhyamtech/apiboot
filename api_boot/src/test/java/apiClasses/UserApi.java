@@ -9,6 +9,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.testng.Assert;
 //import org.junit.Assert;
 
+import configuration.BaseClass;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -25,6 +26,7 @@ public class UserApi {
 	private Response response;
 	private int StatusCode;
 	private String xlPath;
+	BaseClass objBase= new BaseClass();
 	String userId;
 	int scode;
 
@@ -53,7 +55,7 @@ public class UserApi {
 		}
 		else if(operation.equalsIgnoreCase("PUT"))
 		{
-			endPoint =baseURI+prop.getProperty("puttUserEndpoint");
+			endPoint =baseURI+prop.getProperty("putUserEndpoint");
 		}
 		else if(operation.equalsIgnoreCase("DELETE"))
 		{
@@ -61,14 +63,30 @@ public class UserApi {
 		}
 		System.out.println(endPoint);
 	}
-
+	
+	public int checkGetallUser()
+	{
+		response=given().log().all().auth().basic(objBase.getUserName(),objBase.getPassword()).get(endPoint);
+		int Status_Code=response.getStatusCode();
+		//int rs=200;
+		//Assert.assertEquals(Status_Code,rs);
+		System.out.println("matching");
+		return Status_Code;
+	}
 	public void sendGetAllUser(String operation) throws InvalidFormatException, IOException {
-		//response=given().log().all().auth().basic(prop.getProperty("username"),prop.getProperty("password")).get(endPoint);
+		//response=given().log().all().auth().basic(objBase.getUserName(),objBase.getPassword()).get(endPoint);
 		System.out.println(endPoint+"deletereq");
 		ExcelUtilities xlutils =new ExcelUtilities();
 		xlPath=prop.getProperty("xlPath");
-		
-	    List<Map<String, String>> data = xlutils.getData(xlPath, "Testdata","GET");
+		List<Map<String, String>> data = null;
+		if(operation.equalsIgnoreCase("GET"))
+		  {
+	     data = xlutils.getData(xlPath, "Testdata","GET");
+		  }
+		else  if(operation.equalsIgnoreCase("CRUD"))
+		{
+			 data = xlutils.getData(xlPath, "Testdata","CRUD");
+		}
 	    for (Map<String, String> row : data) {
 	    	System.out.println("1");
 	    	UserPut userpayload = new UserPut();
@@ -99,7 +117,7 @@ public class UserApi {
 		  System.out.println(endPoint);
 		  userpayload.setUserAddress (userAddress);
 		 
-		  response=given().log().all().auth().basic(prop.getProperty("username"),prop.getProperty("password")).when().contentType(ContentType.JSON).get(endPoint);
+		  response=given().log().all().auth().basic(objBase.getUserName(),objBase.getPassword()).when().contentType(ContentType.JSON).get(endPoint);
 		 
 		 System.out.println( response.getBody().asString());
 		 
@@ -115,7 +133,7 @@ public class UserApi {
 	public void verifyStatusCode(int expectedStatusCode)
 	{
 		StatusCode=response.getStatusCode();
-		Assert.assertEquals(StatusCode,expectedStatusCode);
+		Assert.assertEquals(StatusCode,scode);
 		System.out.println("matching");
 	}
 	public void verifyHeader1()
@@ -124,14 +142,23 @@ public class UserApi {
 		System.out.println("response is in json");
 	}
 
-	public String postRequest() throws InvalidFormatException, IOException
+	public String postRequest(String operation) throws InvalidFormatException, IOException
 	{
 		String userID =null;
 
 		ExcelUtilities xlutils =new ExcelUtilities();
 		xlPath=prop.getProperty("xlPath");
 
-		List<Map<String, String>> data = xlutils.getData(xlPath, "Testdata","POST");
+		List<Map<String, String>> data = null;
+		if(operation.equalsIgnoreCase("POST"))
+		  {
+	     data = xlutils.getData(xlPath, "Testdata","POST");
+		  }
+		else  if(operation.equalsIgnoreCase("CRUD"))
+		{
+			 data = xlutils.getData(xlPath, "Testdata","CRUD");
+		}
+		//List<Map<String, String>> data = xlutils.getData(xlPath, "Testdata","POST");
 		for (Map<String, String> row : data) {
 			UserPojo userpayload = new UserPojo();
 			UserAddress userAddress = new UserAddress();
@@ -146,14 +173,14 @@ public class UserApi {
 			userAddress.setZipCode(row.get("zipcode"));
 			userpayload.setUserAddress (userAddress);
 
-			 response=given().log().all().auth().basic(prop.getProperty("username"),prop.getProperty("password")).when().contentType(ContentType.JSON).body(userpayload).post(endPoint).then().extract().response();
+			 response=given().log().all().auth().basic(objBase.getUserName(),objBase.getPassword()).when().contentType(ContentType.JSON).body(userpayload).post(endPoint).then().extract().response();
 
 			System.out.println( response.getBody().asString());
 			scode =Integer.parseInt(row.get("status"));
 			if(response.statusCode()==scode)
 			{
 				JsonPath jsonPath = response.jsonPath();
-				int userId = jsonPath.getInt("user_id");
+				userId =String.valueOf(jsonPath.getInt("user_id"));
 				System.out.println(userId);
 			}
 		}
@@ -193,13 +220,13 @@ public class UserApi {
 		  }
 		  userpayload.setUserAddress (userAddress);
 		  
-		 Response response1=given().log().all().auth().basic(prop.getProperty("username"),prop.getProperty("password")).when().contentType(ContentType.JSON).body(userpayload).put(endPoint).then().extract().response();
+		 response=given().log().all().auth().basic(objBase.getUserName(),objBase.getPassword()).when().contentType(ContentType.JSON).body(userpayload).put(endPoint).then().extract().response();
 		 
-		 System.out.println( response1.getBody().asString());
+		 System.out.println( response.getBody().asString());
 		 
-		  if(response1.statusCode()==scode)
+		  if(response.statusCode()==scode)
 		  {
-		 JsonPath jsonPath = response1.jsonPath();
+		 JsonPath jsonPath = response.jsonPath();
 		   userId =String.valueOf(jsonPath.getInt("user_id"));
 		System.out.println(userId);
 		  }
@@ -208,11 +235,19 @@ public class UserApi {
 	
 	public void deleteRequest(String operation) throws InvalidFormatException, IOException
 	{
-		 System.out.println(endPoint+"deletereq");
+		 System.out.println(endPoint+userId);
 		ExcelUtilities xlutils =new ExcelUtilities();
 		xlPath=prop.getProperty("xlPath");
+		List<Map<String, String>> data = null;
+		if(operation.equalsIgnoreCase("DELETE"))
+		  {
+	     data = xlutils.getData(xlPath, "Testdata","DELETE");
+		  }
+		else  if(operation.equalsIgnoreCase("CRUD"))
+		{
+			 data = xlutils.getData(xlPath, "Testdata","CRUD");
+		}
 		
-	    List<Map<String, String>> data = xlutils.getData(xlPath, "Testdata","DELETE");
 	    for (Map<String, String> row : data) {
 	    	System.out.println("1");
 	    	UserPut userpayload = new UserPut();
@@ -242,7 +277,7 @@ public class UserApi {
 		  System.out.println(endPoint);
 		  userpayload.setUserAddress (userAddress);
 		 
-		  response=given().log().all().auth().basic(prop.getProperty("username"),prop.getProperty("password")).when().contentType(ContentType.JSON).delete(endPoint);
+		  response=given().log().all().auth().basic(objBase.getUserName(),objBase.getPassword()).when().contentType(ContentType.JSON).delete(endPoint);
 		 
 		 System.out.println( response.getBody().asString());
 		 

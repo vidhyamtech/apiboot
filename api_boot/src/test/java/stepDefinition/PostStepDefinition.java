@@ -17,7 +17,7 @@ public void create_a_user_with_valid_endpoint() throws IOException {
 
 @When("user send http post request")
 public void user_send_http_post_request() throws InvalidFormatException, IOException {
-	objApi.postRequest();
+	objApi.postRequest("POST");
 }
 
 @Then("user gets valid response body for post")

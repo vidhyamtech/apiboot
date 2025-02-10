@@ -12,7 +12,7 @@ UserApi objApi= new UserApi();
 
 @Given("user sets the baseurl and endpoint for delete {string}")
 public void user_sets_the_baseurl_and_endpoint_for_delete(String string) throws IOException {
-	objApi.setUserGetEndpoint(string);
+	objApi.setUserGetEndpoint("DELETE");
 }
 
 @When("user send http delete request")
