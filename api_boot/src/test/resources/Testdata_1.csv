@@ -1,0 +1,10 @@
+firstname,lastname,contactno,email,plotno,street,state,country,zipcode,user_id,operation
+apinname,apilname,1193055292,t1eam511er0iear@gmail.com,12-q,street,state,usa,12345,,CRUD1
+apinname,apilname,5310131234,team05r1o8211@gmail.com,12-q,street,state,usa,12345,,POST
+apinname,apilname,232735509,lessthancontact@gmail.com,12-q,street,state,usa,12345,,POST1
+apinname,apilname,12320450931,team2zok0@gmail.com,12-q,street,state,usa,12345,15697,DEL1
+apinname,apilname,1232045093,team2zok0@gmail.com,12-q,street,state,usa,12345,,POST1
+apinname,apilname,q41113582,te1aojfew1f8@gmail.com,12-q,street,state,usa,12345,15703,PUT1
+apinname,apilname,2311135840,te1aojfew1f8@gmail.com,12-q,street,state,usa,12345,15703,PUT1
+apinname,apilname,2411135840,te1aojfew1f8@gmail.com,12-q,street,state,usa,12345,15703,PUT1
+apinname,apilname,1232045093,team2zok0@gmail.com,12-q,street,state,usa,12345,16739,DEL1
